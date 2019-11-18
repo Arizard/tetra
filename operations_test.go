@@ -3,43 +3,64 @@ package tetra
 import "testing"
 
 func Test_operate(t *testing.T) {
-	var NoneTransform = Transform{
-		Operation: "none",
-		KWArgs:    make(map[string]string),
-	}
-	var UndefTransform = Transform{
-		Operation: "undef",
-		KWArgs:    make(map[string]string),
-	}
 	type args struct {
 		transform Transform
 		csvData   string
 	}
 	tests := []struct {
-		name string
-		args args
-		want string
+		name    string
+		args    args
+		want    string
+		wantErr bool
 	}{
 		{
-			"Initial Test",
+			"None Transform",
 			args{
-				NoneTransform,
-				"one,two,three,four,\na,b,c,d,",
+				Transform{
+					"none",
+					map[string]string{},
+				},
+				"a,b,c,d,\r\n1,2,3,4,\r\nw,x,y,z,",
 			},
-			"one,two,three,four,\na,b,c,d,",
+			"a,b,c,d,\r\n1,2,3,4,\r\nw,x,y,z,",
+			false,
 		},
 		{
-			"Test undefined operation",
+			"Undefined Transform",
 			args{
-				UndefTransform,
-				"one,two,three,four,\na,b,c,d,",
+				Transform{
+					"undef",
+					map[string]string{},
+				},
+				"a,b,c,d,\r\n1,2,3,4,\r\nw,x,y,z,",
 			},
-			"one,two,three,four,\na,b,c,d,",
+			"",
+			true,
+		},
+		{
+			"Slice Rows Transform",
+			args{
+				Transform{
+					"slice_rows",
+					map[string]string{
+						"start": "1",
+						"end":   "-1",
+					},
+				},
+				"a,b,c,d,\n1,2,3,4,\nw,x,y,z,\n",
+			},
+			"1,2,3,4,\nw,x,y,z,\n",
+			false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := operate(tt.args.transform, tt.args.csvData); got != tt.want {
+			got, err := operate(tt.args.transform, tt.args.csvData)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("operate() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.want {
 				t.Errorf("operate() = %v, want %v", got, tt.want)
 			}
 		})
