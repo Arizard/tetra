@@ -19,3 +19,15 @@ type Config struct {
 	ReuseRecord      bool
 	Transforms       []Transform
 }
+
+// AddTransform is a method of *Config which adds a new transform, making sure
+// to include the reference back to the original config.
+func (c *Config) AddTransform(op string, kwargs map[string]interface{}) {
+	newTransform := Transform{
+		Operation: op,
+		KWArgs:    kwargs,
+		Config:    c,
+	}
+
+	c.Transforms = append(c.Transforms, newTransform)
+}
