@@ -66,3 +66,16 @@ config.AddTransform(
     },
 )
 ```
+
+### Reverse Rows
+
+Reverse all rows of the csv. Takes no keyword arguments.
+
+Example:
+
+```go
+config.AddTransform(
+    "reverse_rows",
+    map[string]interface{}{},
+)
+```
