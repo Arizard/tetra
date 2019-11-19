@@ -49,8 +49,8 @@ func Test_operate(t *testing.T) {
 				Transform{
 					"slice_rows",
 					map[string]interface{}{
-						"start": "1",
-						"end":   "-1",
+						"start": 1,
+						"end":   -1,
 					},
 					&config,
 				},

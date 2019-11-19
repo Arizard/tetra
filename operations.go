@@ -6,7 +6,6 @@ import (
 	"encoding/csv"
 	"fmt"
 	"io"
-	"strconv"
 	"strings"
 )
 
@@ -38,32 +37,25 @@ func sliceRowsOp(transform Transform, csvData string) (string, error) {
 	reader.FieldsPerRecord = transform.Config.FieldsPerRecord
 
 	recordsIn, err := reader.ReadAll()
-
-	if tempStart, err := strconv.Atoi(transform.KWArgs["start"].(string)); err != nil {
-		return "", fmt.Errorf("error: start not integer (%s)", err)
-	} else {
-		startIndex = tempStart
+	if err != nil {
+		return "", err
 	}
-	if tempEnd, err := strconv.Atoi(transform.KWArgs["end"].(string)); err != nil {
-		return "", fmt.Errorf("error: end not integer (%s)", err)
-	} else {
-		if tempEnd >= 0 {
-			endIndex = tempEnd
-		}
-		if tempEnd < 0 {
-			endIndex = len(recordsIn) + tempEnd
-		}
+
+	tempStart := transform.KWArgs["start"].(int)
+	tempEnd := transform.KWArgs["end"].(int)
+
+	startIndex = tempStart
+
+	if tempEnd >= 0 {
+		endIndex = tempEnd
+	}
+	if tempEnd < 0 {
+		endIndex = len(recordsIn) + tempEnd
 	}
 
 	for i := startIndex; i <= endIndex; i++ {
 		record := recordsIn[i]
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
-			return "", err
-		}
-		fmt.Printf("%s\n", record)
+
 		recordsOut = append(recordsOut, record)
 	}
 
@@ -75,14 +67,43 @@ func sliceRowsOp(transform Transform, csvData string) (string, error) {
 
 	csvWriter.Flush()
 
-	fmt.Printf("%v\n", recordsOut)
+	return b.String(), nil
+}
+
+func reverseRowsOp(transform Transform, csvData string) (string, error) {
+
+	var recordsOut [][]string
+
+	reader := csv.NewReader(strings.NewReader(csvData))
+	reader.Comma = transform.Config.Comma
+	reader.FieldsPerRecord = transform.Config.FieldsPerRecord
+
+	recordsIn, err := reader.ReadAll()
+	if err != nil {
+		return "", err
+	}
+
+	for i := len(recordsIn) - 1; i >= 0; i-- {
+		record := recordsIn[i]
+
+		recordsOut = append(recordsOut, record)
+	}
+
+	var b bytes.Buffer
+
+	csvDataBuf := bufio.NewWriter(&b)
+
+	csvWriter := csv.NewWriter(csvDataBuf)
+	csvWriter.WriteAll(recordsOut)
+	csvWriter.Flush()
 
 	return b.String(), nil
 }
 
 var operationMap = map[string](func(Transform, string) (string, error)){
-	"none":       noneOp,
-	"slice_rows": sliceRowsOp,
+	"none":         noneOp,
+	"slice_rows":   sliceRowsOp,
+	"reverse_rows": reverseRowsOp,
 }
 
 func operate(transform Transform, csvData string) (string, error) {
