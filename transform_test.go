@@ -41,7 +41,7 @@ func TestTransformCSV(t *testing.T) {
 			"Test variable fields config",
 			args{
 				config,
-				"a,b,c,d,\n1,2,3,4,5,\ne,f,g,h,\n5,6,7,8,\n",
+				"a,b,c,d,\n1,2,3,4,\ne,f,g,h,\n5,6,7,8,\n",
 			},
 			"1,2,3,4,\ne,f,g,h,\n5,6,7,8,\n",
 		},
