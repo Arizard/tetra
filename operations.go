@@ -34,12 +34,12 @@ func sliceRowsOp(transform Transform, csvData string) (string, error) {
 	reader := csv.NewReader(strings.NewReader(csvData))
 	recordsIn, err := reader.ReadAll()
 
-	if tempStart, err := strconv.Atoi(transform.KWArgs["start"]); err != nil {
+	if tempStart, err := strconv.Atoi(transform.KWArgs["start"].(string)); err != nil {
 		return "", fmt.Errorf("error: start not integer (%s)", err)
 	} else {
 		startIndex = tempStart
 	}
-	if tempEnd, err := strconv.Atoi(transform.KWArgs["end"]); err != nil {
+	if tempEnd, err := strconv.Atoi(transform.KWArgs["end"].(string)); err != nil {
 		return "", fmt.Errorf("error: end not integer (%s)", err)
 	} else {
 		if tempEnd >= 0 {

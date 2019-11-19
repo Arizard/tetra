@@ -18,7 +18,7 @@ func Test_operate(t *testing.T) {
 			args{
 				Transform{
 					"none",
-					map[string]string{},
+					map[string]interface{}{},
 				},
 				"a,b,c,d,\r\n1,2,3,4,\r\nw,x,y,z,",
 			},
@@ -30,7 +30,7 @@ func Test_operate(t *testing.T) {
 			args{
 				Transform{
 					"undef",
-					map[string]string{},
+					map[string]interface{}{},
 				},
 				"a,b,c,d,\r\n1,2,3,4,\r\nw,x,y,z,",
 			},
@@ -42,7 +42,7 @@ func Test_operate(t *testing.T) {
 			args{
 				Transform{
 					"slice_rows",
-					map[string]string{
+					map[string]interface{}{
 						"start": "1",
 						"end":   "-1",
 					},
