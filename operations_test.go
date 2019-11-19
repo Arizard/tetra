@@ -47,9 +47,9 @@ func Test_operate(t *testing.T) {
 						"end":   "-1",
 					},
 				},
-				"a,b,c,d,\n1,2,3,4,\nw,x,y,z,\n",
+				"a,b,c,d,\n1,2,3,4,\nw,x,y,z,\na,b,c,d,\n1,2,3,4,\nw,x,y,z,\n",
 			},
-			"1,2,3,4,\nw,x,y,z,\n",
+			"1,2,3,4,\nw,x,y,z,\na,b,c,d,\n1,2,3,4,\nw,x,y,z,\n",
 			false,
 		},
 	}
