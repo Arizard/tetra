@@ -26,12 +26,17 @@ func noneOp(transform Transform, csvData string) (string, error) {
 }
 
 func sliceRowsOp(transform Transform, csvData string) (string, error) {
+
 	var recordsOut [][]string
 
 	var startIndex int
 	var endIndex int
 
 	reader := csv.NewReader(strings.NewReader(csvData))
+
+	reader.Comma = transform.Config.Comma
+	reader.FieldsPerRecord = transform.Config.FieldsPerRecord
+
 	recordsIn, err := reader.ReadAll()
 
 	if tempStart, err := strconv.Atoi(transform.KWArgs["start"].(string)); err != nil {

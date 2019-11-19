@@ -3,6 +3,10 @@ package tetra
 import "testing"
 
 func Test_operate(t *testing.T) {
+	config := Config{
+		Comma:           ',',
+		FieldsPerRecord: -1,
+	}
 	type args struct {
 		transform Transform
 		csvData   string
@@ -19,6 +23,7 @@ func Test_operate(t *testing.T) {
 				Transform{
 					"none",
 					map[string]interface{}{},
+					&config,
 				},
 				"a,b,c,d,\r\n1,2,3,4,\r\nw,x,y,z,",
 			},
@@ -31,6 +36,7 @@ func Test_operate(t *testing.T) {
 				Transform{
 					"undef",
 					map[string]interface{}{},
+					&config,
 				},
 				"a,b,c,d,\r\n1,2,3,4,\r\nw,x,y,z,",
 			},
@@ -46,6 +52,7 @@ func Test_operate(t *testing.T) {
 						"start": "1",
 						"end":   "-1",
 					},
+					&config,
 				},
 				"a,b,c,d,\n1,2,3,4,\nw,x,y,z,\na,b,c,d,\n1,2,3,4,\nw,x,y,z,\n",
 			},
