@@ -40,8 +40,7 @@ func (c *Config) AddTransform(op string, kwargs map[string]interface{}) {
 
 // LoadFromJSON converts json config into a struct.
 func (c *Config) LoadFromJSON(b []byte) error {
-	var newConfig Config
-	err := json.Unmarshal(b, &newConfig)
+	err := json.Unmarshal(b, c)
 	for _, tran := range c.Transforms {
 		tran.Config = c
 	}
