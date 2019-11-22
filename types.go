@@ -44,8 +44,8 @@ func (c *Config) LoadFromJSON(b []byte) error {
 	err := json.Unmarshal(b, &newConfig)
 	for _, tran := range c.Transforms {
 		tran.Config = c
-		c.Comma = []rune(c.commaString)[0]
-		c.Comment = []rune(c.commentString)[0]
 	}
+	c.Comma = []rune(c.commaString)[0]
+	c.Comment = []rune(c.commentString)[0]
 	return err
 }
