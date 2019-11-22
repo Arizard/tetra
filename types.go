@@ -46,9 +46,12 @@ func (c *Config) LoadFromJSON(b []byte) error {
 	for _, tran := range c.Transforms {
 		tran.Config = c
 	}
+	if c.commaString != "" {
+		c.Comma = []rune(c.commaString)[0]
+	}
+	if c.commaString != "" {
+		c.Comment = []rune(c.commentString)[0]
+	}
 	glog.Infof("%+v", c)
-	deRef := *c
-	c.Comma = []rune(deRef.commaString)[0]
-	c.Comment = []rune(deRef.commentString)[0]
 	return err
 }
