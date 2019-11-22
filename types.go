@@ -39,5 +39,8 @@ func (c *Config) AddTransform(op string, kwargs map[string]interface{}) {
 // UnmarshalJSON converts json config into a struct.
 func (c *Config) UnmarshalJSON(b []byte) error {
 	err := json.Unmarshal(b, c)
+	for _, tran := range c.Transforms {
+		tran.Config = c
+	}
 	return err
 }
