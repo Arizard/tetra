@@ -8,15 +8,17 @@ import (
 type Transform struct {
 	Operation string                 `json:"operation,omitempty"`
 	KWArgs    map[string]interface{} `json:"kw_args,omitempty"`
-	Config    *Config                `json:"config,omitempty"`
+	Config    *Config
 }
 
 // Config defines meta information and a list of transformations for the
 // csv file.
 type Config struct {
 	// See https://golang.org/pkg/encoding/csv/#Reader.Read
-	Comma            rune        `json:"comma,omitempty"`
-	Comment          rune        `json:"comment,omitempty"`
+	commaString      string `json:"comma_string,string,omitempty"`
+	Comma            rune
+	commentString    string `json:"comment_string,string,omitempty"`
+	Comment          rune
 	FieldsPerRecord  int         `json:"fields_per_record,omitempty"`
 	LazyQuotes       bool        `json:"lazy_quotes,omitempty"`
 	TrimLeadingSpace bool        `json:"trim_leading_space,omitempty"`
@@ -36,11 +38,14 @@ func (c *Config) AddTransform(op string, kwargs map[string]interface{}) {
 	c.Transforms = append(c.Transforms, newTransform)
 }
 
-// UnmarshalJSON converts json config into a struct.
-func (c *Config) UnmarshalJSON(b []byte) error {
-	err := json.Unmarshal(b, c)
+// LoadFromJSON converts json config into a struct.
+func (c *Config) LoadFromJSON(b []byte) error {
+	var newConfig Config
+	err := json.Unmarshal(b, &newConfig)
 	for _, tran := range c.Transforms {
 		tran.Config = c
+		c.Comma = []rune(c.commaString)[0]
+		c.Comment = []rune(c.commentString)[0]
 	}
 	return err
 }
