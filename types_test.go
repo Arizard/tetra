@@ -3,7 +3,8 @@ package tetra
 import "testing"
 
 var sampleJSON = `{
-    "comma_string": ",",
+    "comma": 44,
+    "fields_per_record": -1,
     "transforms": [
         {
             "operation": "slice_rows",
@@ -56,6 +57,8 @@ func TestConfig_LoadFromJSON(t *testing.T) {
 			}
 			if err := c.LoadFromJSON(tt.args.b); (err != nil) != tt.wantErr {
 				t.Errorf("Config.LoadFromJSON() error = %v, wantErr %v", err, tt.wantErr)
+			} else {
+				t.Logf("%+v\n", *c)
 			}
 		})
 	}

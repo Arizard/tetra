@@ -17,10 +17,8 @@ type Transform struct {
 // csv file.
 type Config struct {
 	// See https://golang.org/pkg/encoding/csv/#Reader.Read
-	commaString      string `json:"comma_string,string,omitempty"`
-	Comma            rune
-	commentString    string `json:"comment_string,string,omitempty"`
-	Comment          rune
+	Comma            rune        `json:"comma,omitempty"`
+	Comment          rune        `json:"comment,omitempty"`
 	FieldsPerRecord  int         `json:"fields_per_record,omitempty"`
 	LazyQuotes       bool        `json:"lazy_quotes,omitempty"`
 	TrimLeadingSpace bool        `json:"trim_leading_space,omitempty"`
@@ -43,14 +41,8 @@ func (c *Config) AddTransform(op string, kwargs map[string]interface{}) {
 // LoadFromJSON converts json config into a struct.
 func (c *Config) LoadFromJSON(b []byte) error {
 	err := json.Unmarshal(b, c)
-	for _, tran := range c.Transforms {
-		tran.Config = c
-	}
-	if c.commaString != "" {
-		c.Comma = []rune(c.commaString)[0]
-	}
-	if c.commaString != "" {
-		c.Comment = []rune(c.commentString)[0]
+	for idx := range c.Transforms {
+		c.Transforms[idx].Config = c
 	}
 	glog.Infof("%+v", c)
 	return err
