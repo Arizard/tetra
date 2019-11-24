@@ -41,8 +41,8 @@ func sliceRowsOp(transform Transform, csvData string) (string, error) {
 		return "", err
 	}
 
-	tempStart := transform.KWArgs["start"].(int)
-	tempEnd := transform.KWArgs["end"].(int)
+	tempStart := int(transform.KWArgs["start"].(float64))
+	tempEnd := int(transform.KWArgs["end"].(float64))
 
 	startIndex = tempStart
 	if tempStart < 0 {
