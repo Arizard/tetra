@@ -16,8 +16,8 @@ func TestTransformCSV(t *testing.T) {
 	config.AddTransform(
 		"slice_rows",
 		map[string]interface{}{
-			"start": 1,
-			"end":   -1,
+			"start": 1.0,
+			"end":   -1.0,
 		},
 	)
 	type args struct {

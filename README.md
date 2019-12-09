@@ -1,8 +1,9 @@
-# Tetra
+Tetra
+========
 
-A CSV pre-processing library for Tesseract. Provide a string csv and a list of row/cell/column transformations, and get the transformed string csv back.
+Tetra is a csv processing library for the Tesseract ecosystem.
 
-## Usage
+Usage example:
 
 ```go
 
@@ -22,6 +23,7 @@ func main() {
     }
 
     // Add transforms in the same order as you want them to be applied.
+    // In this case, we exclude the first row.
     config.AddTransform(
         "slice_rows",
         map[string]interface{}{
@@ -48,34 +50,30 @@ func main() {
 
 
 ```
+Features
+--------
 
-## Transformations
+- Define sequences of CSV transformations.
 
-### Slice Rows
+Installation
+------------
 
-Get a slice of rows from the csv. `start` is the first row of the slice. `end` is the last row of the slice. `start` and `end` can be negative values, referring to the nth row from the end.
+Install Tetra by running:
 
-Example:
+    go get github.com/arizard/tetra
 
-```go
-config.AddTransform(
-    "slice_rows",
-    map[string]interface{}{
-        "start": 1, // 2nd row
-        "end":   -2, // 2nd last row
-    },
-)
-```
+Contribute
+----------
 
-### Reverse Rows
+- Issue Tracker: https://github.com/Arizard/tetra/issues
+- Source Code: https://github.com/Arizard/tetra
 
-Reverse all rows of the csv. Takes no keyword arguments.
+Support
+-------
 
-Example:
+If you are having issues, please let us know using the issue tracker.
 
-```go
-config.AddTransform(
-    "reverse_rows",
-    map[string]interface{}{},
-)
-```
+License
+-------
+
+The project is licensed under the BSD license.
