@@ -69,7 +69,7 @@ func Test_operate(t *testing.T) {
 					},
 					&config,
 				},
-				"hello world,michael o'connor,\n",
+				"hello world,michAEL o'connor,\n",
 			},
 			"hello world,Michael O'Connor,\n",
 			false,

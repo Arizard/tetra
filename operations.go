@@ -122,7 +122,7 @@ func titleCaseColumnOp(transform Transform, csvData string) (string, error) {
 		newRecord := record
 		for j, cell := range newRecord {
 			if columnIndex == j {
-				newRecord[j] = strings.Title(cell)
+				newRecord[j] = strings.Title(strings.ToLower(cell))
 			}
 		}
 		recordsOut = append(recordsOut, newRecord)
