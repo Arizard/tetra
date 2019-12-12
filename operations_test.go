@@ -59,6 +59,21 @@ func Test_operate(t *testing.T) {
 			"1,2,3,4,\nw,x,y,z,\na,b,c,d,\n1,2,3,4,\nw,x,y,z,\n",
 			false,
 		},
+		{
+			"TitleCase Transform",
+			args{
+				Transform{
+					"titlecase_column",
+					map[string]interface{}{
+						"index": 1.0,
+					},
+					&config,
+				},
+				"hello world,michael o'connor,\n",
+			},
+			"hello world,Michael O'Connor,\n",
+			false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

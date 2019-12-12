@@ -9,7 +9,16 @@ import (
 	"strings"
 )
 
-func noneOp(transform Transform, csvData string) (string, error) {
+func readerFromData(s string, t Transform) *csv.Reader {
+	reader := csv.NewReader(strings.NewReader(s))
+
+	reader.Comma = t.Config.Comma
+	reader.FieldsPerRecord = t.Config.FieldsPerRecord
+
+	return reader
+}
+
+func noneOp(_ Transform, csvData string) (string, error) {
 	reader := csv.NewReader(strings.NewReader(csvData))
 	for {
 		_, err := reader.Read()
@@ -31,10 +40,7 @@ func sliceRowsOp(transform Transform, csvData string) (string, error) {
 	var startIndex int
 	var endIndex int
 
-	reader := csv.NewReader(strings.NewReader(csvData))
-
-	reader.Comma = transform.Config.Comma
-	reader.FieldsPerRecord = transform.Config.FieldsPerRecord
+	reader := readerFromData(csvData, transform)
 
 	recordsIn, err := reader.ReadAll()
 	if err != nil {
@@ -75,9 +81,7 @@ func reverseRowsOp(transform Transform, csvData string) (string, error) {
 
 	var recordsOut [][]string
 
-	reader := csv.NewReader(strings.NewReader(csvData))
-	reader.Comma = transform.Config.Comma
-	reader.FieldsPerRecord = transform.Config.FieldsPerRecord
+	reader := readerFromData(csvData, transform)
 
 	recordsIn, err := reader.ReadAll()
 	if err != nil {
@@ -101,10 +105,45 @@ func reverseRowsOp(transform Transform, csvData string) (string, error) {
 	return b.String(), nil
 }
 
+func titleCaseColumnOp(transform Transform, csvData string) (string, error) {
+
+	var recordsOut [][]string
+
+	reader := readerFromData(csvData, transform)
+
+	columnIndex := int(transform.KWArgs["index"].(float64))
+
+	recordsIn, err := reader.ReadAll()
+	if err != nil {
+		return "", err
+	}
+
+	for _, record := range recordsIn {
+		newRecord := record
+		for j, cell := range newRecord {
+			if columnIndex == j {
+				newRecord[j] = strings.Title(cell)
+			}
+		}
+		recordsOut = append(recordsOut, newRecord)
+	}
+
+	var b bytes.Buffer
+
+	csvDataBuf := bufio.NewWriter(&b)
+
+	csvWriter := csv.NewWriter(csvDataBuf)
+	csvWriter.WriteAll(recordsOut)
+	csvWriter.Flush()
+
+	return b.String(), nil
+}
+
 var operationMap = map[string](func(Transform, string) (string, error)){
-	"none":         noneOp,
-	"slice_rows":   sliceRowsOp,
-	"reverse_rows": reverseRowsOp,
+	"none":             noneOp,
+	"slice_rows":       sliceRowsOp,
+	"reverse_rows":     reverseRowsOp,
+	"titlecase_column": titleCaseColumnOp,
 }
 
 func operate(transform Transform, csvData string) (string, error) {
