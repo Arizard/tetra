@@ -160,7 +160,7 @@ func mergeColumnsOp(transform Transform, csvData string) (string, error) {
 
 	for _, record := range recordsIn {
 		newRecord := record
-		if len(newRecord) - 1 <= max(colSrcIndex, colDstIndex) {
+		if len(newRecord) - 1 >= max(colSrcIndex, colDstIndex) {
 			srcCell := newRecord[colSrcIndex]
 			if srcCell != "" {
 				newRecord[colDstIndex] = srcCell
@@ -196,7 +196,7 @@ func ignoreRowsWhereColumnEqualsOp(transform Transform, csvData string) (string,
 
 	for _, record := range recordsIn {
 		newRecord := record
-		if len(newRecord) - 1 > colIndex { continue }
+		if len(newRecord) - 1 < colIndex { continue }
 		if newRecord[colIndex] == colMatch { continue }
 		recordsOut = append(recordsOut, newRecord)
 	}
