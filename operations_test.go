@@ -83,6 +83,7 @@ func Test_operate(t *testing.T) {
 						"index": 1.0,
 						"format": "02/01/2006",
 						"timezone": "Australia/Sydney",
+						"headers": 0.0,
 					},
 					&config,
 				},

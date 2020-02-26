@@ -214,6 +214,7 @@ func ignoreRowsWhereColumnEqualsOp(transform Transform, csvData string) (string,
 }
 
 func ignoreRowsWhereColumnInFuture(transform Transform, csvData string) (string, error) {
+	headers := int(transform.KWArgs["headers"].(float64))
 	format := transform.KWArgs["format"].(string)
 	colIndex := int(transform.KWArgs["index"].(float64))
 
@@ -230,19 +231,27 @@ func ignoreRowsWhereColumnInFuture(transform Transform, csvData string) (string,
 		return "", err
 	}
 
-	for _, record := range recordsIn {
+	for i, record := range recordsIn {
 
-		if len(record) - 1 < colIndex { continue }
+		if i >= headers {
+			if len(record)-1 < colIndex {
+				continue
+			}
 
-		cell := record[colIndex]
+			cell := record[colIndex]
 
-		cellTime, err := time.Parse(format, cell)
-		if err != nil { panic(err) }
-		cellTimeLocalised := cellTime.In(timezone)
+			cellTime, err := time.Parse(format, cell)
+			if err != nil {
+				panic(err)
+			}
+			cellTimeLocalised := cellTime.In(timezone)
 
-		now := time.Now().In(timezone)
+			now := time.Now().In(timezone)
 
-		if cellTimeLocalised.After(now) { continue }
+			if cellTimeLocalised.After(now) {
+				continue
+			}
+		}
 
 		recordsOut = append(recordsOut, record)
 	}
