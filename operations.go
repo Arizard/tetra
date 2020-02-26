@@ -240,15 +240,14 @@ func ignoreRowsWhereColumnInFuture(transform Transform, csvData string) (string,
 
 			cell := record[colIndex]
 
-			cellTime, err := time.Parse(format, cell)
+			cellTime, err := time.ParseInLocation(format, cell, timezone)
 			if err != nil {
 				panic(err)
 			}
-			cellTimeLocalised := cellTime.In(timezone)
 
 			now := time.Now().In(timezone)
 
-			if cellTimeLocalised.After(now) {
+			if cellTime.After(now) {
 				continue
 			}
 		}
