@@ -8,6 +8,7 @@ import (
 	"io"
 	"math"
 	"strings"
+	"time"
 )
 
 func readerFromData(s string, t Transform) *csv.Reader {
@@ -212,6 +213,51 @@ func ignoreRowsWhereColumnEqualsOp(transform Transform, csvData string) (string,
 	return b.String(), nil
 }
 
+func ignoreRowsWhereColumnInFuture(transform Transform, csvData string) (string, error) {
+	format := transform.KWArgs["format"].(string)
+	colIndex := int(transform.KWArgs["index"].(float64))
+
+	timezoneName := transform.KWArgs["timezone"].(string)
+	timezone, err := time.LoadLocation(timezoneName)
+	if err != nil { panic(err) }
+
+	var recordsOut [][]string
+
+	reader := readerFromData(csvData, transform)
+
+	recordsIn, err := reader.ReadAll()
+	if err != nil {
+		return "", err
+	}
+
+	for _, record := range recordsIn {
+
+		if len(record) - 1 < colIndex { continue }
+
+		cell := record[colIndex]
+
+		cellTime, err := time.Parse(format, cell)
+		if err != nil { panic(err) }
+		cellTimeLocalised := cellTime.In(timezone)
+
+		now := time.Now().In(timezone)
+
+		if cellTimeLocalised.After(now) { continue }
+
+		recordsOut = append(recordsOut, record)
+	}
+
+	var b bytes.Buffer
+
+	csvDataBuf := bufio.NewWriter(&b)
+
+	csvWriter := csv.NewWriter(csvDataBuf)
+	csvWriter.WriteAll(recordsOut)
+	csvWriter.Flush()
+
+	return b.String(), nil
+}
+
 var operationMap = map[string](func(Transform, string) (string, error)){
 	"none":             noneOp,
 	"slice_rows":       sliceRowsOp,
@@ -219,6 +265,7 @@ var operationMap = map[string](func(Transform, string) (string, error)){
 	"titlecase_column": titleCaseColumnOp,
 	"merge_columns": mergeColumnsOp,
 	"ignore_rows_where_column_equals": ignoreRowsWhereColumnEqualsOp,
+	"ignore_rows_where_column_in_future": ignoreRowsWhereColumnInFuture,
 }
 
 func operate(transform Transform, csvData string) (string, error) {

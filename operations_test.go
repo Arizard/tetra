@@ -74,6 +74,23 @@ func Test_operate(t *testing.T) {
 			"hello world,Michael O'Connor,\n",
 			false,
 		},
+		{
+			"Effective Dates?",
+			args{
+				Transform{
+					"ignore_rows_where_column_in_future",
+					map[string]interface{}{
+						"index": 1.0,
+						"format": "02/01/2006",
+						"timezone": "Australia/Sydney",
+					},
+					&config,
+				},
+				"effective,01/01/2020,\nnot effective,01/01/2050,\n",
+			},
+			"effective,01/01/2020,\n",
+			false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
